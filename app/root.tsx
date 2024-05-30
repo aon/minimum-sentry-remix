@@ -1,9 +1,11 @@
+import { captureRemixErrorBoundaryError, withSentry } from "@sentry/remix";
 import {
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useRouteError,
 } from "@remix-run/react";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -24,6 +26,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
+export const ErrorBoundary = () => {
+  const error = useRouteError();
+  captureRemixErrorBoundaryError(error);
+  return <div>Something went wrong</div>;
+};
+
+function App() {
   return <Outlet />;
 }
+
+export default withSentry(App);
